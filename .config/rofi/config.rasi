@@ -1,0 +1,95 @@
+@theme "gruvbox-dark"
+
+/*
+* {
+	bg: #181E27;
+	background-color: @bg;
+}
+
+
+configuration {
+	show-icons: true;
+	icon-theme: "Papirus";
+	location: 0;
+	font: "JetBrainsMono Nerd Font 12";	
+	display-drun: "Launch:";
+}
+
+*/
+
+window { 
+	width: 33%;
+	transparency: "real";
+	orientation: vertical;
+    border-radius: 16px;
+    padding: 8px;
+}
+
+mainbox {
+	children: [inputbar, listview];
+}
+
+listview {
+    scrollbar: false;
+    lines: 7;
+}
+
+/*
+
+// ELEMENT
+// -----------------------------------
+
+element {
+	padding: 4 12;
+	text-color: #EFE7DD;
+}
+
+element selected {
+	background-color: #74adc0;
+}
+
+element-text {
+	background-color: inherit;
+	text-color: inherit;
+}
+
+element-icon {
+	size: 16 px;
+	background-color: inherit;
+	padding: 0 6 0 0;
+	alignment: vertical;
+}
+li
+*/
+/*
+// INPUT BAR 
+//------------------------------------------------
+
+entry {
+	text-color: #EFE7DD;
+	padding: 10 10 0 0;
+	margin: 0 -2 0 0;
+}
+
+inputbar {
+	margin: 0 0 0 0;
+} 
+
+prompt {
+	text-color: #dedede;
+	padding: 10 6 0 10;
+	margin: 0 -2 0 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+*/
