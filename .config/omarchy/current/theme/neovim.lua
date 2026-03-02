@@ -1,10 +1,12 @@
 return {
-	{ "neanias/everforest-nvim" },
-	{
-		"LazyVim/LazyVim",
-		opts = {
-			colorscheme = "everforest",
-			background = "soft",
-		},
-	},
+  {
+    "ribru17/bamboo.nvim",
+    priority = 1000,
+  },
+  {
+    "LazyVim/LazyVim",
+    opts = {
+      colorscheme = "bamboo",
+    },
+  },
 }

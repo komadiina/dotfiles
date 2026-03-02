@@ -1,4 +1,4 @@
-general.import = [ "~/.config/omarchy/current/theme/alacritty.toml" ]
+general.import = ["~/.config/omarchy/current/theme/alacritty.toml"]
 
 [env]
 TERM = "xterm-256color"
@@ -17,8 +17,8 @@ opacity = 0.5
 
 [keyboard]
 bindings = [
-{ key = "Insert", mods = "Shift", action = "Paste" },
-{ key = "Insert", mods = "Control", action = "Copy" }
+  { key = "Insert", mods = "Shift", action = "Paste" },
+  { key = "Insert", mods = "Control", action = "Copy" },
 ]
 
 [cursor]

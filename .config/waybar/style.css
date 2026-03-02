@@ -13,14 +13,8 @@
 
 .modules-left {
   margin-left: 8px;
-  padding: 4px 8px;
+  padding: 0px 8px;
   background-color: alpha(@background, 0.5);
-  border-radius: 8px;
-}
-
-.modules-center {
-  background-color: alpha(@background, 0.5);
-  padding: 4px 8px;
   border-radius: 8px;
 }
 
@@ -82,7 +76,7 @@ tooltip {
 }
 
 #clock {
-  margin-left: 8.75px;
+  margin: 6px 6px;
 }
 
 .hidden {
