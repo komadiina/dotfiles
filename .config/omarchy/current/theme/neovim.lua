@@ -1,12 +1,13 @@
 return {
   {
-    "ribru17/bamboo.nvim",
+    "kepano/flexoki-neovim",
+    name = "flexoki",
     priority = 1000,
   },
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "bamboo",
+      colorscheme = "flexoki-dark",
     },
   },
 }
