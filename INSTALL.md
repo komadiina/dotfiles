@@ -16,6 +16,7 @@ cd config/.config && cp . $HOME/.config/ -r
 cd local/.local && cp . $HOME/.local -r
 bg=$HOME/.config/omarchy/current/theme/backgrounds; rm -rf $bg && mkdir -p $bg
 cp assets/dragonflight.jpeg $HOME/.config/omarchy/current/theme/backgrounds/dragonflight.jpeg
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 hyprctl reload
 # edit ~/.zshrc to not source ~/.local/scripts/load-creds.sh
 ```
