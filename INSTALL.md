@@ -14,8 +14,10 @@ sudo ln -sfn $HOME/.local/walker /usr/local/bin/walker
 cd home && cp . $HOME -r
 cd config/.config && cp . $HOME/.config/ -r
 cd local/.local && cp . $HOME/.local -r
+cd themes/harbordark && cp . $HOME/.config/omarchy/current/theme -r
 bg=$HOME/.config/omarchy/current/theme/backgrounds; rm -rf $bg && mkdir -p $bg
 cp assets/dragonflight.jpeg $HOME/.config/omarchy/current/theme/backgrounds/dragonflight.jpeg
+mv $HOME/.oh-my-zsh $HOME/.oh-my-zsh.bak-$(date +%T | sed 's/ /-/g')
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 hyprctl reload
 # edit ~/.zshrc to not source ~/.local/scripts/load-creds.sh
