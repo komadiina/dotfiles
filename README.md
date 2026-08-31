@@ -25,6 +25,5 @@ refer to [INSTALL.md](INSTALL.md) for detailed steps.
 ### preview
 
 ![./assets/docs/ss1.png](./assets/docs/ss1.png)
-![./assets/docs/ss2.png](./assets/docs/ss2.png)
 ![./assets/docs/ss3.png](./assets/docs/ss3.png)
 ![./assets/docs/ss4.png](./assets/docs/ss4.png)
