@@ -28,3 +28,25 @@ hyprctl reload
 ```
 ./boostrap.sh
 ```
+
+- symlinks by hand (no stow; mirrors what `stow --no-folding` does, one link per file):
+
+```bash
+DOTS="$(pwd)"
+for pkg in home local config; do
+  (cd "$DOTS/$pkg" && find . -type f -printf '%P\n') | while read -r rel; do
+    live="$HOME/$rel"
+    [ -e "$live" ] && [ ! -L "$live" ] && mv "$live" "$live.bak-$(date +%s)"
+    mkdir -p "$(dirname "$live")"
+    ln -sfn "$DOTS/$pkg/$rel" "$live"
+  done
+done
+# per-host monitors + theme symlinks that stow skips (see .stow-local-ignore)
+HOST="$(hostnamectl hostname 2>/dev/null || cat /etc/hostname)"
+[ -f "$DOTS/config/.config/hypr/monitors.d/$HOST.conf" ] \
+  && ln -sfn "$DOTS/config/.config/hypr/monitors.d/$HOST.conf" "$HOME/.config/hypr/monitors.conf"
+ln -sfn "$HOME/.config/omarchy/current/theme/btop.theme" "$HOME/.config/btop/themes/current.theme"
+mkdir -p "$HOME/.config/nvim/lua/plugins"
+ln -sfn "$HOME/.config/omarchy/current/theme/neovim.lua" "$HOME/.config/nvim/lua/plugins/theme.lua"
+hyprctl reload
+```

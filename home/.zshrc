@@ -18,4 +18,16 @@ PROMPT='[%F{green}%*%f] %n in %F{blue}%~%f %F{red}${vcs_info_msg_0_}%f> '
 . $UTILSCRIPTS_DIR/startup/init-aliases.sh
 . $UTILSCRIPTS_DIR/startup/init-hyprsunset.sh
 . $UTILSCRIPTS_DIR/log.sh
+
+# home / end / delete (in case omz didn't catch them)
+bindkey "${terminfo[khome]}" beginning-of-line
+bindkey "${terminfo[kend]}"  end-of-line
+bindkey "${terminfo[kdch1]}" delete-char
+
+# word-wise nav + delete
+bindkey '^[[1;5C' forward-word       # ctrl+right
+bindkey '^[[1;5D' backward-word      # ctrl+left
+bindkey '^H'      backward-kill-word # ctrl+backspace
+bindkey '^[[3;5~' kill-word          # ctrl+delete
+
 [[ -f ~/.profile ]] && . ~/.profile

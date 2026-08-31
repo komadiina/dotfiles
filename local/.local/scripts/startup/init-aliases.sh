@@ -10,5 +10,8 @@ eval "$(pay-respects zsh --alias)"
 alias ls="eza --group-directories-first --icons --git"
 alias ll="eza --group-directories-first -la --icons --git"
 alias lt="eza --group-directories-first -T --git-ignore"
+alias ga="git add -A"
+alias gcm="git commit -m"
+alias gp="git push"
 alias cat='bat'
 alias dbe="distrobox enter"
