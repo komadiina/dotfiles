@@ -1,0 +1,30 @@
+# GNU stow ignore list for the `config` package.
+# NOTE: providing this file REPLACES stow's built-in default list, so the
+# defaults are repeated below, then our own entries are appended.
+
+RCS
+.+,v
+CVS
+\.\#.+
+\.cvsignore
+\.svn
+_darcs
+\.git
+\.gitignore
+\.gitmodules
+.+~
+\#.*\#
+^/README.*
+^/LICENSE.*
+^/COPYING
+
+# ---------------------------------------------------------------------------
+# omarchy-managed theme symlinks
+#
+# These are committed to the repo as absolute symlinks into
+# ~/.config/omarchy/current/theme/. stow 2.4+ aborts the whole run rather than
+# stow an absolute symlink that points outside the package, so exclude them.
+# bootstrap.sh recreates them directly after stowing.
+# ---------------------------------------------------------------------------
+^/\.config/btop/themes/current\.theme$
+^/\.config/nvim/lua/plugins/theme\.lua$

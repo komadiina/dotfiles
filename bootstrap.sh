@@ -136,6 +136,20 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# 4b. omarchy theme symlinks that live inside stowed packages
+#
+# btop and neovim read their theme from a symlink into
+# ~/.config/omarchy/current/theme/. These are committed to the repo as absolute
+# symlinks, but stow 2.4+ refuses to stow an absolute symlink pointing outside
+# the package (it aborts the whole run), so config/.stow-local-ignore excludes
+# them and they are (re)created here instead. omarchy-theme-set rewrites the
+# targets on every switch; this just guarantees the links exist after a stow.
+# ---------------------------------------------------------------------------
+ln -sfn "$HOME/.config/omarchy/current/theme/btop.theme" "$HOME/.config/btop/themes/current.theme"
+mkdir -p "$HOME/.config/nvim/lua/plugins"
+ln -sfn "$HOME/.config/omarchy/current/theme/neovim.lua" "$HOME/.config/nvim/lua/plugins/theme.lua"
+
+# ---------------------------------------------------------------------------
 # 5. systemd user units
 # ---------------------------------------------------------------------------
 echo "==> systemd user units"
