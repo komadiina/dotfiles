@@ -1,6 +1,0 @@
-#!/bin/bash
-
-source "${UTILSCRIPTS_DIR:-$HOME/.local/scripts}/load-creds.sh" || exit 1
-
-xfreerdp3 /v:"$CX_RDP_HOST_151" /u:"$CX_RDP_USER" /p:"$CX_RDP_PASSWORD" \
-    /w:1440 /h:900 /cert:ignore +compression /audio-mode:1 &

@@ -1,6 +1,0 @@
-#!/bin/bash
-
-source "${UTILSCRIPTS_DIR:-$HOME/.local/scripts}/load-creds.sh" || exit 1
-
-sudo openfortivpn --saml-login &
-chromium --new-window "$CX_VPN_SAML_URL"

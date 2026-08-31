@@ -15,7 +15,6 @@ zstyle ':vcs_info:git:*' formats '%b '
 setopt PROMPT_SUBST
 PROMPT='[%F{green}%*%f] %n in %F{blue}%~%f %F{red}${vcs_info_msg_0_}%f> '
 
-. $UTILSCRIPTS_DIR/startup/init-ssh.sh
 . $UTILSCRIPTS_DIR/startup/init-aliases.sh
 . $UTILSCRIPTS_DIR/startup/init-hyprsunset.sh
 . $UTILSCRIPTS_DIR/log.sh
