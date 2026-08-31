@@ -4,7 +4,6 @@ cbonsai
 fastmod
 hyprmon
 jfrog-cli
-mdatp-bin
 mpvpaper
 nerd-fonts-noto-sans-mono
 nmstate
@@ -12,7 +11,5 @@ oh-my-zsh-git
 openshift-client-bin
 pay-respects
 posting
-pulse-secure
 slack-desktop
-tofi-dmenu
 urlencode
