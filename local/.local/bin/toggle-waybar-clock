@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Toggle both bars at once: the main omarchy waybar and the desktop clock
+# waybar (~/.config/waybar-clock). Same launch steps as restart-waybar-clock,
+# just gated on whether anything is running.
+#
+# Both are plain `waybar` processes, so `pkill -x waybar` takes down the pair.
+
+if pgrep -x waybar >/dev/null; then
+  pkill -x waybar
+else
+  setsid uwsm-app -- waybar >/dev/null 2>&1 &
+  setsid waybar -c ~/.config/waybar-clock/config.jsonc -s ~/.config/waybar-clock/style.css >/dev/null 2>&1 &
+fi

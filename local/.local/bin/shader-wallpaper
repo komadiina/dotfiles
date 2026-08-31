@@ -1,0 +1,39 @@
+#!/bin/bash
+# Render the current Omarchy wallpaper through an animated GLSL shader.
+# Replaces swaybg; follows ~/.config/omarchy/current/background, so
+# omarchy-theme-set / omarchy-theme-bg-next still pick the base image.
+
+SHADER="$HOME/.config/omarchy/shaders/wallpaper.glsl"
+BACKGROUND="$HOME/.config/omarchy/current/background"
+FPS=30
+
+# Autostart runs this before mpvpaper may be installed; leave swaybg alone
+# rather than killing it and leaving the user with a bare background layer.
+if ! command -v mpvpaper >/dev/null 2>&1; then
+  exit 0
+fi
+
+pkill -x mpvpaper
+
+# Omarchy's own autostart may launch swaybg just after us at login, so keep
+# clearing it for a few seconds rather than killing it once and losing the race.
+(for _ in {1..16}; do pkill -x swaybg; sleep 0.25; done) >/dev/null 2>&1 &
+
+BG=$(readlink -f "$BACKGROUND" 2>/dev/null)
+
+if [[ ! -f $BG || ! -f $SHADER ]]; then
+  # Nothing to render - fall back to a plain black background.
+  setsid uwsm-app -- swaybg --color '#000000' >/dev/null 2>&1 &
+  exit 0
+fi
+
+# lavfi turns the still image into an endless stream so the shader keeps
+# getting frames to animate; without it mpv renders once and freezes.
+SOURCE="av://lavfi:movie=${BG},loop=loop=-1:size=1,fps=fps=${FPS}"
+
+MPV_OPTS="no-audio
+loop-file=inf
+panscan=1.0
+glsl-shaders=$SHADER"
+
+setsid uwsm-app -- mpvpaper -o "${MPV_OPTS//$'\n'/ }" '*' "$SOURCE" >/dev/null 2>&1 &

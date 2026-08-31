@@ -1,0 +1,10 @@
+# Real file, not the usual symlink to the theme's mako.ini.
+# The include keeps theme colours working (omarchy-theme-set swaps
+# current/theme wholesale), while letting us add a lock-only mode that
+# the theme's do-not-disturb stanzas don't punch holes in.
+include=~/.config/omarchy/current/theme/mako.ini
+
+# Used by ~/.local/bin/lock-shader. No app-name exceptions, unlike
+# do-not-disturb, which the theme lets notify-send through.
+[mode=locked]
+invisible=true

@@ -1,0 +1,7 @@
+theme: amberbyte
+layout: horizontal
+response:
+  prettify_json: true
+heading:
+  visible: false
+  show_host: true

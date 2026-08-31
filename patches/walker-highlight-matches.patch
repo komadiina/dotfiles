@@ -1,0 +1,168 @@
+diff --git i/src/renderers/mod.rs w/src/renderers/mod.rs
+index cb6783e..80588a4 100644
+--- i/src/renderers/mod.rs
++++ w/src/renderers/mod.rs
+@@ -1,14 +1,20 @@
+ use crate::config::get_config;
+ use crate::protos::generated_proto::query::query_response::Item;
+ use crate::providers::PROVIDERS;
+-use crate::state::{get_dmenu_current, is_grid, is_hide_qa, set_error};
++use crate::state::{
++    get_current_prefix, get_dmenu_current, get_query, is_grid, is_hide_qa, set_error,
++};
+ use crate::theme::{Theme, with_themes};
+ use crate::ui::window::{quit, with_window};
+ use gtk4::gdk::ContentProvider;
+ use gtk4::gio::File;
+ use gtk4::gio::prelude::FileExt;
++#[allow(deprecated)]
++use gtk4::prelude::StyleContextExt;
+ use gtk4::prelude::{ListItemExt, WidgetExt};
+ use gtk4::{Box, Builder, DragSource, Label, ListItem, glib};
++use nucleo_matcher::pattern::{CaseMatching, Normalization, Pattern};
++use nucleo_matcher::{Config as MatcherConfig, Matcher, Utf32Str};
+ use std::path::Path;
+ 
+ pub fn create_item(list_item: &ListItem, item: &Item, theme: &Theme) {
+@@ -72,6 +78,7 @@ pub fn create_item(list_item: &ListItem, item: &Item, theme: &Theme) {
+ 
+     if let Some(text) = b.object::<Label>("ItemText") {
+         p.text_transformer(item, &text);
++        highlight_matches(&text);
+     }
+ 
+     if let Some(text) = b.object::<Label>("ItemSubtext") {
+@@ -98,6 +105,133 @@ pub fn create_item(list_item: &ListItem, item: &Item, theme: &Theme) {
+     }
+ }
+ 
++/// Pango-markup the characters of `label` that the current query fuzzy-matched,
++/// tofi style. Runs after the provider's `text_transformer`, so it highlights
++/// whatever text actually ended up on screen (basename for files, the truncated
++/// string for clipboard, ...).
++///
++/// The colour is taken from the theme: `@match` if defined, else `@selected-text`.
++/// With neither defined it falls back to bold + underline, so a theme that
++/// defines no colours still gets a visible highlight.
++fn highlight_matches(label: &Label) {
++    let Some(needle) = current_needle() else {
++        return;
++    };
++
++    let text = label.text().to_string();
++
++    if text.is_empty() {
++        return;
++    }
++
++    let mut buf = Vec::new();
++    let haystack = Utf32Str::new(&text, &mut buf);
++
++    // Same matcher config as sort_items_fuzzy in data.rs, so the highlighted
++    // characters agree with the scoring that put this item where it is.
++    let mut matcher = Matcher::new(MatcherConfig::DEFAULT.match_paths());
++    let pattern = Pattern::parse(&needle, CaseMatching::Ignore, Normalization::Smart);
++
++    let mut indices: Vec<u32> = Vec::new();
++
++    if pattern.indices(haystack, &mut matcher, &mut indices).is_none() {
++        return;
++    }
++
++    indices.sort_unstable();
++    indices.dedup();
++
++    if indices.is_empty() {
++        return;
++    }
++
++    let open = match_span_tag();
++    let chars: Vec<char> = text.chars().collect();
++    let mut markup = String::with_capacity(text.len() + open.len() * 4);
++    let mut i = 0usize;
++    let mut next = 0usize;
++
++    while i < chars.len() {
++        let run_start = i;
++
++        if indices.get(next).is_some_and(|&idx| idx as usize == i) {
++            // consume a whole run of consecutive matched characters
++            while i < chars.len() && indices.get(next).is_some_and(|&idx| idx as usize == i) {
++                i += 1;
++                next += 1;
++            }
++
++            markup.push_str(&open);
++            markup.push_str(&escape(&chars[run_start..i]));
++            markup.push_str("</span>");
++        } else {
++            while i < chars.len() && !indices.get(next).is_some_and(|&idx| idx as usize == i) {
++                i += 1;
++            }
++
++            markup.push_str(&escape(&chars[run_start..i]));
++        }
++    }
++
++    label.set_use_markup(true);
++    label.set_markup(&markup);
++}
++
++fn escape(chars: &[char]) -> String {
++    let s: String = chars.iter().collect();
++    glib::markup_escape_text(&s).to_string()
++}
++
++/// The part of the query that was actually matched against item text, derived
++/// the same way data.rs derives `query_text`: drop the active provider prefix,
++/// everything past the argument delimiter, and the exact-search prefix.
++fn current_needle() -> Option<String> {
++    let mut needle = get_query();
++
++    if needle.is_empty() {
++        return None;
++    }
++
++    let prefix = get_current_prefix();
++
++    if !prefix.is_empty() {
++        needle = needle.strip_prefix(&prefix).unwrap_or(&needle).to_string();
++    }
++
++    let cfg = get_config();
++
++    if let Some((before, _)) = needle.split_once(&cfg.global_argument_delimiter) {
++        needle = before.to_string();
++    }
++
++    if let Some(stripped) = needle.strip_prefix(&cfg.exact_search_prefix) {
++        needle = stripped.to_string();
++    }
++
++    let needle = needle.trim().to_string();
++
++    (!needle.is_empty()).then_some(needle)
++}
++
++#[allow(deprecated)]
++fn match_span_tag() -> String {
++    let color = with_window(|w| {
++        let ctx = w.window.style_context();
++        ctx.lookup_color("match")
++            .or_else(|| ctx.lookup_color("selected-text"))
++    });
++
++    match color {
++        Some(c) => format!(
++            "<span foreground=\"#{:02x}{:02x}{:02x}\" weight=\"bold\">",
++            (c.red() * 255.0).round() as u8,
++            (c.green() * 255.0).round() as u8,
++            (c.blue() * 255.0).round() as u8,
++        ),
++        None => "<span weight=\"bold\" underline=\"single\">".to_string(),
++    }
++}
++
+ pub fn create_drag_source(text: &str) -> DragSource {
+     let drag_source = DragSource::new();
+     let text = text.to_string();

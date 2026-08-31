@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source "${UTILSCRIPTS_DIR:-$HOME/.local/scripts}/load-creds.sh" || exit 1
+
+sshpass -p "$CX_SSH_PASSWORD" ssh "$CX_SSH_USER@$CX_SSH_HOST_237"

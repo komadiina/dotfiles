@@ -1,0 +1,9 @@
+[Unit]
+Description=CRC HTTP socket
+
+[Socket]
+ListenStream=%h/.crc/crc-http.sock
+Service=crc-daemon.service
+
+[Install]
+WantedBy=default.target

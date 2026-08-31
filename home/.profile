@@ -1,0 +1,9 @@
+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias md='mkdir'
+alias lf='du -cksh *'
+alias ll='ls -l'
+alias la='ls -A'
+alias l='ls -w1 -F'
+alias cls='clear'

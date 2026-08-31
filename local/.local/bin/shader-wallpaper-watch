@@ -1,0 +1,37 @@
+#!/bin/bash
+# Keep the shader wallpaper in charge of the background layer.
+#
+# Omarchy relaunches swaybg whenever the background or theme changes, and the
+# background menu fires no hook at all. Polling covers every one of those paths
+# without pulling in inotify-tools.
+
+LAUNCHER="$HOME/.local/bin/shader-wallpaper"
+BACKGROUND="$HOME/.config/omarchy/current/background"
+INTERVAL=2
+COOLDOWN=6
+SETTLE=8
+
+# Ignore the launcher's own black-screen fallback, which runs swaybg with
+# --color rather than -i; matching it would loop forever.
+omarchy_swaybg_running() {
+  pgrep -a -x swaybg 2>/dev/null | grep -q -- ' -i '
+}
+
+# Single instance only, so a relaunch never stacks watchers on top of each other.
+exec 9>"${XDG_RUNTIME_DIR:-/tmp}/shader-wallpaper-watch.lock"
+flock -n 9 || exit 0
+
+sleep "$SETTLE"
+last=$(readlink -f "$BACKGROUND" 2>/dev/null)
+
+while true; do
+  sleep "$INTERVAL"
+
+  current=$(readlink -f "$BACKGROUND" 2>/dev/null)
+
+  if [[ $current != "$last" ]] || omarchy_swaybg_running; then
+    last=$current
+    "$LAUNCHER"
+    sleep "$COOLDOWN"
+  fi
+done

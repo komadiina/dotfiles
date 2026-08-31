@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+env="$1"
+hostnamekey="$2"
+
+file="$HOME/Work/idna-na/creds/creds.$env.json"
+
+cmd="jq --arg k \"$hostnamekey\" '.[$k].password' \"$file\" | wl-copy"
+echo "running: [$cmd]"
+
+jq --arg k "$hostnamekey" '.[$k].password' "$file" | tr -d '"' | tr -d '\r' | tr -d '\n' | tr -d ' ' | wl-copy

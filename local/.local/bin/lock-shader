@@ -1,0 +1,41 @@
+#!/bin/bash
+# Lock with the live mpvpaper shader wallpaper visible behind hyprlock.
+#
+# Needs misc:session_lock_xray, which stops Hyprland blanking EVERYTHING behind
+# the lock surface -- so hide windows, bars and notifications before locking,
+# and restore them on the way out no matter how we exit.
+#
+# Waybar note: SIGUSR1, the documented visibility toggle, is a no-op on waybar
+# 0.15.0 here -- the layer surfaces stay up, verified via `hyprctl layers`. So
+# both bars get killed outright and brought back by restart-waybar-clock, which
+# already relaunches the default bar *and* the waybar-clock instance.
+
+set -u
+
+pgrep -x hyprlock >/dev/null && exit 0        # already locked, don't re-enter
+
+PREV_WS=$(hyprctl activeworkspace -j | jq -r '.name')
+
+restore() {
+    hyprctl keyword misc:session_lock_xray 0 >/dev/null
+    "$HOME/.local/bin/restart-waybar-clock" >/dev/null 2>&1 || true
+    makoctl mode -r locked >/dev/null 2>&1 || true
+    if [ -n "${PREV_WS:-}" ]; then
+        hyprctl dispatch workspace "name:$PREV_WS" >/dev/null
+    fi
+    return 0
+}
+trap restore EXIT INT TERM HUP
+
+makoctl mode -a locked >/dev/null 2>&1 || true       # no notifications through the glass
+pkill -x waybar 2>/dev/null || true                  # both bars down
+hyprctl dispatch workspace name:lock >/dev/null      # empty workspace: no windows behind
+hyprctl keyword misc:session_lock_xray 1 >/dev/null
+
+omarchy-lock-screen                                  # backgrounds hyprlock + locks 1password
+
+for _ in $(seq 40); do                               # wait for hyprlock to come up (max 4s)
+    pgrep -x hyprlock >/dev/null && break
+    sleep 0.1
+done
+while pgrep -x hyprlock >/dev/null; do sleep 0.5; done   # then wait for unlock

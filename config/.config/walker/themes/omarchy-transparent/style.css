@@ -1,0 +1,82 @@
+/* Transparent, tofi-style variant of omarchy-default.
+   Imports the stock theme, then overrides backgrounds, strips the search bar's
+   chrome and floats the live query above the panel. */
+@import url("file:///home/ogg/.local/share/omarchy/default/walker/themes/omarchy-default/style.css");
+
+/* colour for fuzzy-matched characters in item labels (tofi-style highlight).
+   Falls back to @selected-text, then to bold+underline, if undefined. */
+/* @define-color match @border; */
+/* @define-color match rgba(220, 120, 120, 0.95); */
+
+/* --- transparency ------------------------------------------------------- */
+
+/* the layer-shell surface itself */
+window {
+  background: transparent;
+}
+
+/* main panel: tweak the 0.4 to taste (0 = invisible, 1 = opaque) */
+window .box-wrapper {
+  background: alpha(@base, 0.4);
+}
+
+/* --- query readout above the panel --------------------------------------- */
+
+/* The Input entry now sits outside BoxWrapper (see layout.xml), so it draws on
+   the bare layer surface: no panel background, and no wayland blur either,
+   since blur is attached to BoxWrapper only (ui/window.rs:364). Hence the
+   text-shadow, so it stays readable over whatever wallpaper is behind it. */
+window .search-container {
+  background: transparent;
+  border: none;
+  margin: 0;
+  /* left pad = box-wrapper border (2) + its padding (10) + item-box padding (8),
+     so the query lines up with the item text below it.
+     bottom pad is the gap between the query and the panel. */
+  padding: 0 0 8px 8px;
+  font-size: 14px;
+}
+
+window .input,
+window .input text {
+  background: transparent;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+  color: @selected-text;
+  font-size: 20px;
+  /* display-only readout, so no blinking caret */
+  caret-color: transparent;
+  text-shadow: 0 1px 4px alpha(black, 0.9);
+}
+
+/* nothing at all when the query is empty */
+window .input placeholder {
+  opacity: 0;
+}
+
+/* --- list ---------------------------------------------------------------- */
+
+/* the search row used to supply the top padding; give it back to the list */
+window .content-container {
+  margin-top: 2px;
+}
+
+/* keep the selected row readable against the see-through panel */
+window child:selected .item-box {
+  background: alpha(@base, 0);
+  font-size: 20px;
+}
+
+/* --- fixed top edge ------------------------------------------------------ */
+
+/* Outer is valign=start in layout.xml, so the query + panel hang from this
+   offset and grow downward; the top edge never moves as results change.
+   390px keeps a full list looking the same as the old centred position on
+   this 1200px-tall screen ((1200 - ~420) / 2). Lower it to sit higher up. */
+window .query-outer {
+  margin-top: 390px;
+}

@@ -1,0 +1,1 @@
+/home/ogg/.config/omarchy/current/theme/neovim.lua

@@ -1,0 +1,3 @@
+#!/bin/bash 
+
+sudo /etc/vpnc/start-vpn.sh

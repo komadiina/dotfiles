@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Copy the current omarchy wallpaper into the Hyprlain SDDM theme.
+# The greeter runs as the `sddm` user and can't read ~/ (drwx------),
+# so the image has to physically live inside the theme dir.
+# Run this after changing your wallpaper (omarchy-theme-bg-next, theme switch, etc).
+set -euo pipefail
+
+SRC=$(readlink -f "$HOME/.config/omarchy/current/background")
+DEST=/usr/share/sddm/themes/Hyprlain/assets/user_bg.jpg
+
+[[ -f $SRC ]] || { echo "no current background at $SRC" >&2; exit 1; }
+[[ -d $(dirname "$DEST") ]] || { echo "Hyprlain theme not installed" >&2; exit 1; }
+
+sudo install -m 644 -o root -g root "$SRC" "$DEST"
+echo "sddm background <- $SRC"

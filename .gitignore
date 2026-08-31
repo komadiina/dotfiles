@@ -1,0 +1,10 @@
+# Per-host, created by bootstrap.sh as a symlink into config/.config/hypr/monitors.d/
+config/.config/hypr/monitors.conf
+
+# Never
+*.key
+*.pem
+*.kdbx
+.env
+.env.secret
+*_history

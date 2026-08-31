@@ -1,0 +1,25 @@
+{
+  // Desktop clock: sits on the "bottom" layer-shell layer, i.e. above the
+  // wallpaper but below every window. Not exclusive, so it reserves no space.
+  "layer": "bottom",
+  "exclusive": false,
+  // Only top/bottom/left/right are valid here -- "top-left" is not a position.
+  // Place it horizontally with modules-left/center/right + margins instead.
+  "position": "bottom",
+  "reload_style_on_change": true,
+  "height": 130,
+  "margin-top": 0,
+  "margin-right": 8,
+  "margin-bottom": 18,
+  "modules-right": ["clock"],
+  "modules-center": [],
+
+  "clock": {
+    "interval": 1,
+    // Right-align both lines inside the label (and the label inside the module).
+    "justify": "right",
+    "align": 1,
+    "format": "<span size='16pt' weight='300'>{0:%a, %d %b}</span>\n<span size='32pt' weight='500'>{0:%H:%M:%S}</span>",
+    "tooltip": false,
+  },
+}

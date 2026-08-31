@@ -1,0 +1,9 @@
+[Unit]
+Description=CRC vsock socket
+
+[Socket]
+ListenStream=vsock::1024
+Service=crc-daemon.service
+
+[Install]
+WantedBy=default.target
