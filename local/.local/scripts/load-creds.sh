@@ -31,9 +31,9 @@ _lc_missing=''
 "
 
 if [ -n "$_lc_missing" ]; then
-    printf 'load-creds: missing\n%s' "$_lc_missing" >&2
+    printf 'load-creds: missing or incomplete %s\n' "$_lc_missing" >&2
     unset _lc_missing
-    return 1 2>/dev/null || exit 1
+    return 1 2>/dev/null
 fi
 unset _lc_missing
 
