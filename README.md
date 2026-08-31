@@ -10,12 +10,15 @@
 
 ### features
 
+- **pinned aur/pacman packages**
 - collapsible waybar
 - waybar-based clock
 - custom keybindings
 - animated background (mpvpaper, adapted usage for hyprlock display)
 - logging utilities (`log_{debug,info,success,warn,error}`), throbbers, custom terminal-exported colors
-- eza, atuin, custom walker build req/git patch, pay-respects, etc.
+- eza, atuin, pay-respects, etc.
+- custom walker build & config: fuzzy search, pango markup incl.
+- customizable color palette via `$HOME/.config/omarchy/current/thene/colors.{toml,fish}`
 - & more
 
 ### install
