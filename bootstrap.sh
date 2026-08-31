@@ -107,7 +107,36 @@ mkdir -p "$HOME/.config/omarchy/current"
 ln -sfn "$HOME/.dragonflight.jpeg" "$HOME/.config/omarchy/current/background"
 
 # ---------------------------------------------------------------------------
-# 4. systemd user units
+# 4. omarchy theme (hard copy, not stowed)
+#
+# themes/harbordark is a byte-for-byte copy of the live
+# ~/.config/omarchy/current/theme -- the user theme, the tweaks made on top of
+# it, and the files omarchy-theme-set-templates generates. It is copied rather
+# than stowed because omarchy-theme-set does `rm -rf current/theme` on every
+# theme switch: symlinks there would be deleted, and writes meant for the live
+# tree would land back in this repo.
+#
+# themes/<name>/ is the durable half (what omarchy-theme-set reads), so the copy
+# goes there too. current/theme is only seeded when absent, to avoid stomping a
+# live theme on re-runs.
+# ---------------------------------------------------------------------------
+THEME_NAME="$(cat "$DOTS/config/.config/omarchy/current/theme.name" 2>/dev/null || echo harbordark)"
+THEME_SRC="$DOTS/themes/$THEME_NAME"
+if [ -d "$THEME_SRC" ]; then
+    echo "==> omarchy theme: $THEME_NAME"
+    mkdir -p "$HOME/.config/omarchy/themes/$THEME_NAME"
+    cp -a "$THEME_SRC/." "$HOME/.config/omarchy/themes/$THEME_NAME/"
+    if [ ! -e "$HOME/.config/omarchy/current/theme" ]; then
+        echo "    seeding current/theme (run: omarchy-theme-set $THEME_NAME to regenerate)"
+        mkdir -p "$HOME/.config/omarchy/current/theme"
+        cp -a "$THEME_SRC/." "$HOME/.config/omarchy/current/theme/"
+    fi
+else
+    echo "==> omarchy theme: themes/$THEME_NAME missing from repo, skipping"
+fi
+
+# ---------------------------------------------------------------------------
+# 5. systemd user units
 # ---------------------------------------------------------------------------
 echo "==> systemd user units"
 systemctl --user daemon-reload
@@ -117,7 +146,7 @@ while read -r unit; do
 done < "$DOTS/packages/systemd-user-enabled.txt"
 
 # ---------------------------------------------------------------------------
-# 5. dotfiles-secrets: clone if needed, then link hosts.env into $SECRETS_DIR
+# 6. dotfiles-secrets: clone if needed, then link hosts.env into $SECRETS_DIR
 #
 # Linked, not copied. `rm -rf .git && cp -r` would fork the identifiers into an
 # untracked second copy that silently rots; a symlink means `git pull` in the
@@ -153,7 +182,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 6. things this script deliberately cannot do
+# 7. things this script deliberately cannot do
 # ---------------------------------------------------------------------------
 echo
 echo "remaining manual steps:"
@@ -163,6 +192,6 @@ echo "remaining manual steps:"
     || echo "  - restore passwords from the USB: dotfiles-secrets/copy-secrets.sh in <usb>"
 command -v walker >/dev/null && [ "$(command -v walker)" = /usr/local/bin/walker ] \
     || echo "  - build custom walker (see README step 3) - fuzzy-match highlighting is missing without it"
-[ -d "$HOME/.config/omarchy/themes" ] \
-    || echo "  - reclone omarchy themes (omarchy-theme-install), they are not in this repo"
+[ -d "$HOME/.config/omarchy/themes/$THEME_NAME" ] \
+    || echo "  - reinstall the $THEME_NAME theme (omarchy-theme-install); other themes are not in this repo"
 echo "  - hyprctl reload"
